@@ -1,0 +1,112 @@
+@mixin easeOut {
+  transition: all 0.5s ease-in-out;
+}
+
+@mixin background {
+  @if $show-home-image {
+    &.bg-img {
+      background: $home-image;
+      background-attachment: fixed;
+      background-size: cover;
+
+      &:after {
+        content: '';
+        position: absolute;
+        top:0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: rgba($primary-color, $background-opacity);
+      }
+    }
+  }
+}
+
+@mixin timeline-point($size, $border-width, $color, $direction) {
+  position: absolute;
+  @if $direction == right {
+    top: 50%;
+    left: -40px;
+  } @else if $direction == left {
+    top: 50%;
+    right: -40px;
+  } @else if $direction == up {
+    left:50%;
+    margin-left: ($size / 2) * -1;
+    top: -30px;
+  }
+  content: ' ';
+  display: block;
+  width: $size - (2 * $border-width);
+  height: $size - (2 * $border-width);
+  margin-top: ($size / 2) * -1;
+  background: #fff;
+  border-radius: $size / 2;
+  border: $border-width solid $color;
+  z-index: 10;
+}
+
+@mixin triangle($size, $color, $direction) {
+  content: "";
+  position: absolute;
+  height: 0;
+  width: 0;
+  border: solid transparent;
+  border-width: $size / 2;
+  pointer-events: none;
+  @if $direction == left {
+    left: 100%;
+    top: 50%;
+    border-left-color: $color;
+    margin-top: ($size / 2) * -1;
+  } @else if $direction == right {
+    right: 100%;
+    top: 50%;
+    border-right-color: $color;
+    margin-top: ($size / 2) * -1;
+  } @else if $direction == up {
+    left: 50%;
+    top: ($size / 2) * -1;
+    margin-left: ($size / 2) * -1;
+    border-bottom-color: $color;
+  }
+}
+
+@mixin box-shadow($shadow...) {
+  -webkit-box-shadow: $shadow;
+  -moz-box-shadow: $shadow;
+  box-shadow: $shadow;
+}
+
+@function set-text-color($color) {
+  @if (lightness($color) > 40) {
+    @return #000;
+  } @else {
+    @return #fff;
+  }
+}
+
+@mixin mediaSm {
+  @media screen and (max-width: 500px) {
+    @content;
+  }
+}
+
+@mixin mediaMd {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin mediaLg {
+  @media screen and (min-width: 769px) and (max-width: 1170px) {
+    @content;
+  }
+}
+
+@mixin mediaXl {
+  @media screen and (min-width: 1171px) {
+    @content;
+  }
+}
