@@ -48,7 +48,8 @@ const Menu = {
 
         "use strict";
 
-        Menu.elements.menuBtn.element.addEventListener("click",
+        Menu.elements.menuBtn.element.addEventListener(
+            "click",
             Menu.toggle
         );
 
