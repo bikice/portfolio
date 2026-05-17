@@ -4,9 +4,6 @@ import App from './App.vue'
 import './assets/css/main.css'
 
 import HomeView           from './views/HomeView.vue'
-import AboutView          from './views/AboutView.vue'
-import WorkView           from './views/WorkView.vue'
-import ContactView        from './views/ContactView.vue'
 import ImprintView        from './views/ImprintView.vue'
 import DataProtectionView from './views/DataProtectionView.vue'
 
