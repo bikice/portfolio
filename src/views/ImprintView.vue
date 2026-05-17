@@ -2,7 +2,7 @@
   <div class="legal-page">
     <div class="legal-inner">
 
-      <RouterLink to="/home" class="legal-back">
+      <RouterLink :to="{path: '/home', hash: '#contact'}" class="legal-back">
         ← back to portfolio
       </RouterLink>
 

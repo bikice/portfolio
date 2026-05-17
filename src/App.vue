@@ -16,7 +16,7 @@
           </li>
         </template>
         <template v-else>
-          <li><RouterLink to="/home">← Back</RouterLink></li>
+          <li><RouterLink :to="{path: '/home', hash: '#contact'}">← Back</RouterLink></li>
         </template>
       </ul>
 
@@ -38,7 +38,7 @@
         </a>
       </template>
       <template v-else>
-        <RouterLink to="/home">← Back home</RouterLink>
+        <RouterLink :to="{path: '/home', hash: '#hero'}">← Back home</RouterLink>
       </template>
     </div>
 
