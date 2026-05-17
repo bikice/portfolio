@@ -50,6 +50,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import * as THREE from 'three'
+
 
 /* ── Router / Nav ─────────────────────────────────────────── */
 const route         = useRoute()
@@ -78,186 +80,189 @@ function onScroll() {
   }
 }
 
-/* ── Canvas animation ─────────────────────────────────────── */
+/* ── Three.js particle water ──────────────────────────────── */
 const bgCanvas = ref(null)
 
-let ctx     = null
-let animId  = null
-let startTs = null
-let W = 0, H = 0
+// Green palette — dark → mid → accent → highlight
+const C1 = new THREE.Color(0x001a0f)
+const C2 = new THREE.Color(0x006644)
+const C3 = new THREE.Color(0x00c87a)
+const C4 = new THREE.Color(0x00e5c0)   // --accent
 
-// Floating ambient particles above the waves
-let floaters = []
-let bursts   = []
+const COLS   = 320
+const ROWS   = 160
+const W_SPAN = 80
+const D_SPAN = 50
+const COUNT  = COLS * ROWS
 
-function rand(a, b) { return a + Math.random() * (b - a) }
+let renderer, scene, camera, geo
+let posArr, colArr, sizeArr
+let baseX, baseZ
+let animId = null
+let t = 0
+let ripples = []   // { x, z, t0 } world-space click ripples
 
-// ── Wave ribbon config ───────────────────────────────────────
-// Each "ribbon" is a horizontal band of densely packed dots
-// shaped by multiple sine harmonics, giving the 3D cloth look
-const RIBBONS = [
-  // { centerY fraction, amplitude, speed, brightness, dot spacing x/y, color tint }
-  { cy: 0.82, amp: 90,  spd: 0.00042, bright: 1.0,  sx: 4,  sy: 7,  tint: [0,229,192] },
-  { cy: 0.70, amp: 80,  spd: 0.00055, bright: 0.75, sx: 4,  sy: 7,  tint: [0,200,170] },
-  { cy: 0.60, amp: 75,  spd: 0.00038, bright: 0.55, sx: 4,  sy: 8,  tint: [0,180,155] },
-  { cy: 0.50, amp: 70,  spd: 0.00062, bright: 0.40, sx: 4,  sy: 8,  tint: [0,160,140] },
-  { cy: 0.40, amp: 65,  spd: 0.00030, bright: 0.28, sx: 5,  sy: 9,  tint: [0,140,125] },
-]
+function initThree() {
+  const canvas = bgCanvas.value
+  const W = window.innerWidth
+  const H = window.innerHeight
 
-// Precompute dot columns for each ribbon
-let ribbonDots = []   // ribbonDots[i] = array of { bx, localPhase, row, rowFrac }
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false })
+  renderer.setSize(W, H)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.setClearColor(0x07090d, 1)
 
-function buildRibbons() {
-  ribbonDots = RIBBONS.map(rb => {
-    const cols = Math.ceil(W / rb.sx) + 2
-    const rowCount = 18   // dots stacked vertically in the ribbon band
-    const dots = []
-    for (let col = 0; col < cols; col++) {
-      for (let row = 0; row < rowCount; row++) {
-        dots.push({
-          bx:        col * rb.sx,
-          localPhase: col * 0.035,   // horizontal phase shift → wave travels rightward
-          row,
-          rowFrac:   row / (rowCount - 1),  // 0 = top of band, 1 = bottom
-        })
+  scene  = new THREE.Scene()
+  camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 1000)
+  camera.position.set(8, 6, 28)
+  camera.lookAt(-4, 0, -10)
+
+  const positions = new Float32Array(COUNT * 3)
+  const colors    = new Float32Array(COUNT * 3)
+  const sizes     = new Float32Array(COUNT)
+  baseX           = new Float32Array(COUNT)
+  baseZ           = new Float32Array(COUNT)
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const i = r * COLS + c
+      const x = (c / COLS - 0.5) * W_SPAN + (Math.random() - 0.5) * 0.1
+      const z = (r / ROWS - 0.5) * D_SPAN + (Math.random() - 0.5) * 0.1
+      baseX[i] = x; baseZ[i] = z
+      positions[i*3] = x; positions[i*3+1] = 0; positions[i*3+2] = z
+      colors[i*3] = C1.r; colors[i*3+1] = C1.g; colors[i*3+2] = C1.b
+      sizes[i] = 0.04 + Math.random() * 0.04
+    }
+  }
+
+  geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+  geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3))
+  geo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1))
+
+  const mat = new THREE.ShaderMaterial({
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: `
+      attribute float size;
+      varying vec3 vColor;
+      varying float vAlpha;
+      void main(){
+        vColor = color;
+        vec4 mvp = modelViewMatrix * vec4(position, 1.0);
+        vAlpha = clamp(1.0 - length(mvp.xyz) / 80.0, 0.0, 1.0);
+        gl_PointSize = size * (420.0 / -mvp.z);
+        gl_Position = projectionMatrix * mvp;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      varying float vAlpha;
+      void main(){
+        vec2 uv = gl_PointCoord - 0.5;
+        float r = dot(uv, uv);
+        if(r > 0.25) discard;
+        float edge = 1.0 - smoothstep(0.10, 0.25, r);
+        gl_FragColor = vec4(vColor * (1.0 + edge * 0.4), edge * vAlpha * 0.95);
+      }
+    `
+  })
+
+  scene.add(new THREE.Points(geo, mat))
+  posArr  = geo.attributes.position.array
+  colArr  = geo.attributes.color.array
+  sizeArr = geo.attributes.size.array
+}
+
+function animate() {
+  animId = requestAnimationFrame(animate)
+  t += 0.016
+
+  ripples = ripples.filter(rp => t - rp.t0 < 4.0)
+
+  for (let i = 0; i < COUNT; i++) {
+    const x = baseX[i]
+    const z = baseZ[i]
+
+    const wave1  = Math.sin(x*0.14 - t*1.1  + z*0.05) * 3.0
+    const wave2  = Math.sin(x*0.08 + z*0.18 - t*0.75) * 1.8
+    const wave3  = Math.sin(x*0.22 - z*0.10 + t*1.4)  * 0.9
+    const wave4  = Math.cos(x*0.10 + z*0.12 - t*0.55) * 1.2
+    const detail = Math.sin(x*0.35 + z*0.28 - t*2.0)  * 0.3
+    let y = (wave1 + wave2 + wave3 + wave4 + detail) * 0.52
+
+    for (const rp of ripples) {
+      const age  = t - rp.t0
+      const dist = Math.hypot(x - rp.x, z - rp.z)
+      const ring = age * 6
+      const diff = dist - ring
+      if (Math.abs(diff) < 2.5) {
+        const fade = Math.max(0, 1 - age / 4.0)
+        y += Math.sin(diff * 1.2) * 2.2 * fade * (1 - Math.abs(diff) / 2.5)
       }
     }
-    return dots
-  })
-}
 
-function initFloaters() {
-  floaters = Array.from({ length: 120 }, () => ({
-    x:     rand(0, W),
-    y:     rand(0, H * 0.55),
-    vx:    rand(-0.12, 0.12),
-    vy:    rand(-0.18, -0.04),
-    r:     rand(0.6, 1.8),
-    alpha: rand(0.05, 0.35),
-  }))
-}
+    posArr[i*3+1] = y
 
-function resize() {
-  const c = bgCanvas.value
-  W = c.width  = window.innerWidth
-  H = c.height = window.innerHeight
-  buildRibbons()
-  initFloaters()
-}
-
-// Wave height for a dot at position bx, time elapsed, ribbon config
-function waveY(bx, elapsed, rb, localPhase) {
-  const t = elapsed * rb.spd
-  // Primary wave
-  const w1 = Math.sin(t * 6.0  + localPhase) * rb.amp
-  // Secondary harmonic (different freq) for the S-curve complexity
-  const w2 = Math.sin(t * 3.7  + localPhase * 1.4 + 1.2) * rb.amp * 0.45
-  // Slow global swell
-  const w3 = Math.sin(t * 1.1  + localPhase * 0.3) * rb.amp * 0.25
-  return w1 + w2 + w3
-}
-
-function frame(ts) {
-  if (!bgCanvas.value) return
-  if (startTs === null) startTs = ts
-  const elapsed = ts - startTs
-
-  // Soft fade trail
-  ctx.fillStyle = 'rgba(7,9,13,0.42)'
-  ctx.fillRect(0, 0, W, H)
-
-  // ── Ribbons ───────────────────────────────────────────────
-  for (let ri = 0; ri < RIBBONS.length; ri++) {
-    const rb   = RIBBONS[ri]
-    const dots = ribbonDots[ri]
-    const baseY = H * rb.cy
-    const bandH = rb.sy * 18   // total pixel height of this ribbon
-    const [tr, tg, tb] = rb.tint
-
-    for (const d of dots) {
-      const wy  = waveY(d.bx, elapsed, rb, d.localPhase)
-      const py  = baseY + wy + (d.rowFrac - 0.5) * bandH
-
-      // brightness peaks at wave crest (where wy is near max amp)
-      // rowFrac: middle rows are brighter (inner surface of cloth)
-      const crestFrac  = (Math.sin(elapsed * rb.spd * 6.0 + d.localPhase) + 1) / 2
-      const rowBright  = 1 - Math.abs(d.rowFrac - 0.5) * 1.2
-      const alpha = Math.max(0.02,
-          rb.bright * (0.08 + crestFrac * 0.22 + rowBright * 0.18)
-      )
-      const r = 0.7 + crestFrac * 0.9 + rowBright * 0.5
-
-      ctx.beginPath()
-      ctx.arc(d.bx, py, r, 0, Math.PI * 2)
-      ctx.fillStyle = `rgba(${tr},${tg},${tb},${alpha})`
-      ctx.fill()
-    }
+    const h = Math.max(0, Math.min(1, (y + 3.5) / 7.0))
+    let col
+    if      (h < 0.3) col = C1.clone().lerp(C2, h / 0.3)
+    else if (h < 0.7) col = C2.clone().lerp(C3, (h - 0.3) / 0.4)
+    else              col = C3.clone().lerp(C4, (h - 0.7) / 0.3)
+    const b = 0.4 + h * 1.3
+    colArr[i*3] = col.r*b; colArr[i*3+1] = col.g*b; colArr[i*3+2] = col.b*b
+    sizeArr[i]  = 0.035 + h * 0.07
   }
 
-  // ── Floating ambient particles ────────────────────────────
-  for (const f of floaters) {
-    ctx.beginPath()
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(0,229,192,${f.alpha})`
-    ctx.fill()
+  geo.attributes.position.needsUpdate = true
+  geo.attributes.color.needsUpdate    = true
+  geo.attributes.size.needsUpdate     = true
 
-    f.x += f.vx
-    f.y += f.vy
-    if (f.y < -10) { f.y = H * 0.55; f.x = rand(0, W) }
-    if (f.x < -10) f.x = W + 10
-    if (f.x > W + 10) f.x = -10
-  }
+  camera.position.x = 8 + Math.sin(t * 0.06) * 1.5
+  camera.position.y = 6 + Math.sin(t * 0.09) * 0.5
+  camera.lookAt(-4, 0, -10)
 
-  // ── Click bursts ──────────────────────────────────────────
-  for (let b = bursts.length - 1; b >= 0; b--) {
-    const burst = bursts[b]
-    burst.life--
-    const fade = Math.max(0, burst.life / burst.maxLife)
-    fade * fade  // ease out
+  renderer.render(scene, camera)
+}
 
-    for (let i = 0; i < burst.px.length; i++) {
-      burst.px[i]  += burst.pvx[i]
-      burst.py[i]  += burst.pvy[i]
-      burst.pvx[i] *= 0.95
-      burst.pvy[i] *= 0.95
-
-      ctx.beginPath()
-      ctx.arc(burst.px[i], burst.py[i], 1.5, 0, Math.PI * 2)
-      ctx.fillStyle = `rgba(0,229,192,${fade * 0.95})`
-      ctx.fill()
-    }
-    if (burst.life <= 0) bursts.splice(b, 1)
-  }
-
-  animId = requestAnimationFrame(frame)
+function screenToWorld(ex, ey) {
+  const ndc = new THREE.Vector3(
+      (ex / window.innerWidth)  *  2 - 1,
+      (ey / window.innerHeight) * -2 + 1,
+      0.5
+  )
+  ndc.unproject(camera)
+  const dir  = ndc.sub(camera.position).normalize()
+  const dist = -camera.position.y / dir.y
+  return { x: camera.position.x + dir.x * dist, z: camera.position.z + dir.z * dist }
 }
 
 function onCanvasClick(e) {
-  const count = 70
-  const px = [], py = [], pvx = [], pvy = []
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2
-    const speed = rand(1.2, 6)
-    px.push(e.clientX); py.push(e.clientY)
-    pvx.push(Math.cos(angle) * speed)
-    pvy.push(Math.sin(angle) * speed)
-  }
-  bursts.push({ px, py, pvx, pvy, life: 65, maxLife: 65 })
+  const { x, z } = screenToWorld(e.clientX, e.clientY)
+  ripples.push({ x, z, t0: t })
+}
+
+function onResize() {
+  const W = window.innerWidth, H = window.innerHeight
+  camera.aspect = W / H
+  camera.updateProjectionMatrix()
+  renderer.setSize(W, H)
 }
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('resize', resize)
-
-  ctx = bgCanvas.value.getContext('2d')
-  resize()
-  animId = requestAnimationFrame(frame)
+  window.addEventListener('resize', onResize)
+  initThree()
+  animate()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
-  window.removeEventListener('resize', resize)
+  window.removeEventListener('resize', onResize)
   if (animId) cancelAnimationFrame(animId)
+  renderer?.dispose()
 })
 </script>
 
