@@ -42,201 +42,211 @@
     </section>
 
     <!-- ── ABOUT ──────────────────────────────────── -->
-    <section id="about" class="section-z" style="background:var(--bg2)">
+    <section id="about" class="section-z">
       <div class="section-inner">
-        <div class="section-label reveal">About me</div>
-        <h2 class="section-title reveal">Who I <span class="accent">Am</span></h2>
+        <div class="section-card">
+          <div class="section-label reveal">About me</div>
+          <h2 class="section-title reveal">Who I <span class="accent">Am</span></h2>
 
-        <div class="about-grid">
-          <div class="about-img-wrap reveal">
-            <img src="/images/portrait.jpg" alt="Kristof Kamin" />
-            <div class="about-img-badge">Dev since 2010</div>
-          </div>
-
-          <div>
-            <div class="about-meta reveal-stagger">
-              <div v-for="m in aboutMeta" :key="m.key" class="about-meta-item">
-                <span class="key">{{ m.key }}</span>
-                <span class="val">{{ m.val }}</span>
-              </div>
+          <div class="about-grid">
+            <div class="about-img-wrap reveal">
+              <img src="/images/portrait.jpg" alt="Kristof Kamin" />
+              <div class="about-img-badge">Dev since 2010</div>
             </div>
 
-            <p class="about-bio reveal">
-              Since 2010 I've been working in the web development space — building modern
-              websites and web applications, including the mobile domain. For many years
-              JavaScript has been my primary environment. I've shipped everything from RIA
-              office suites and cloud-storage platforms to social-media networks and freelance
-              client projects.
-            </p>
+            <div>
+              <div class="about-meta reveal-stagger">
+                <div v-for="m in aboutMeta" :key="m.key" class="about-meta-item">
+                  <span class="key">{{ m.key }}</span>
+                  <span class="val">{{ m.val }}</span>
+                </div>
+              </div>
+
+              <p class="about-bio reveal">
+                Since 2010 I've been working in the web development space — building modern
+                websites and web applications, including the mobile domain. For many years
+                JavaScript has been my primary environment. I've shipped everything from RIA
+                office suites and cloud-storage platforms to social-media networks and freelance
+                client projects.
+              </p>
+            </div>
           </div>
-        </div>
+        </div><!-- /.section-card -->
       </div>
     </section>
 
     <!-- ── SKILLS ─────────────────────────────────── -->
-    <section id="skills" class="section-z" style="background:var(--bg)">
+    <section id="skills" class="section-z">
       <div class="section-inner">
-        <div class="section-label reveal">Expertise</div>
-        <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
+        <div class="section-card">
+          <div class="section-label reveal">Expertise</div>
+          <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
 
-        <div class="skills-layout">
+          <div class="skills-layout">
 
-          <!-- Left: tab navigation -->
-          <div class="skill-nav reveal-stagger">
-            <div
-                v-for="(cat, idx) in skillCats"
-                :key="cat.id"
-                class="skill-nav-item"
-                :class="{ active: activeSkill === cat.id }"
-                @click="setSkill(cat.id)"
-            >
-              <span class="skill-nav-num">0{{ idx + 1 }}</span>
-              <span class="skill-nav-name">{{ cat.name }}</span>
-              <div class="skill-nav-track">
-                <div class="skill-nav-fill" :style="{ width: cat.avgPct + '%' }" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: active panel (sticky) -->
-          <div class="skills-panel-host">
-            <transition name="panel-fade" mode="out-in">
-              <div :key="activeSkill" class="skill-panel active">
-                <div class="skill-panel-title">{{ currentCat.name }}</div>
-                <div
-                    v-for="skill in currentCat.skills"
-                    :key="skill.name"
-                    class="skill-row"
-                >
-                  <div class="skill-row-label">
-                    <span>{{ skill.name }}</span>
-                    <span>{{ skill.pct }}%</span>
-                  </div>
-                  <div class="skill-track">
-                    <div
-                        class="skill-fill"
-                        :style="{ width: skillsVisible ? skill.pct + '%' : '0%' }"
-                    />
-                  </div>
+            <!-- Left: tab navigation -->
+            <div class="skill-nav reveal-stagger">
+              <div
+                  v-for="(cat, idx) in skillCats"
+                  :key="cat.id"
+                  class="skill-nav-item"
+                  :class="{ active: activeSkill === cat.id }"
+                  @click="setSkill(cat.id)"
+              >
+                <span class="skill-nav-num">0{{ idx + 1 }}</span>
+                <span class="skill-nav-name">{{ cat.name }}</span>
+                <div class="skill-nav-track">
+                  <div class="skill-nav-fill" :style="{ width: cat.avgPct + '%' }" />
                 </div>
               </div>
-            </transition>
-          </div>
+            </div>
 
-        </div>
+            <!-- Right: active panel (sticky) -->
+            <div class="skills-panel-host">
+              <transition name="panel-fade" mode="out-in">
+                <div :key="activeSkill" class="skill-panel active">
+                  <div class="skill-panel-title">{{ currentCat.name }}</div>
+                  <div
+                      v-for="skill in currentCat.skills"
+                      :key="skill.name"
+                      class="skill-row"
+                  >
+                    <div class="skill-row-label">
+                      <span>{{ skill.name }}</span>
+                      <span>{{ skill.pct }}%</span>
+                    </div>
+                    <div class="skill-track">
+                      <div
+                          class="skill-fill"
+                          :style="{ width: skillsVisible ? skill.pct + '%' : '0%' }"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </transition>
+            </div>
+
+          </div>
+        </div><!-- /.section-card -->
       </div>
     </section>
 
     <!-- ── WORK ───────────────────────────────────── -->
-    <section id="work" class="section-z" style="background:var(--bg2)">
+    <section id="work" class="section-z">
       <div class="section-inner">
-        <div class="section-label reveal">Career</div>
-        <h2 class="section-title reveal">Work &amp; <span class="accent">Education</span></h2>
+        <div class="section-card">
+          <div class="section-label reveal">Career</div>
+          <h2 class="section-title reveal">Work &amp; <span class="accent">Education</span></h2>
 
-        <div class="timeline">
-          <div
-              v-for="(entry, i) in timeline"
-              :key="entry.company + i"
-              class="tl-entry"
-              :ref="el => { if (el) tlEntries[i] = el }"
-              :style="{ transitionDelay: (i * 0.07) + 's' }"
-          >
-            <div class="tl-dot" />
-            <div class="tl-period">{{ entry.period }}</div>
-            <div class="tl-company">{{ entry.company }}</div>
-            <div class="tl-desc">{{ entry.description }}</div>
+          <div class="timeline">
+            <div
+                v-for="(entry, i) in timeline"
+                :key="entry.company + i"
+                class="tl-entry"
+                :ref="el => { if (el) tlEntries[i] = el }"
+                :style="{ transitionDelay: (i * 0.07) + 's' }"
+            >
+              <div class="tl-dot" />
+              <div class="tl-period">{{ entry.period }}</div>
+              <div class="tl-company">{{ entry.company }}</div>
+              <div class="tl-desc">{{ entry.description }}</div>
+            </div>
           </div>
-        </div>
+        </div><!-- /.section-card -->
       </div>
     </section>
 
     <!-- ── CONTACT ────────────────────────────────── -->
-    <section id="contact" class="section-z" style="background:var(--bg)">
+    <section id="contact" class="section-z">
       <div class="section-inner">
-        <div class="section-label reveal">Get in touch</div>
-        <h2 class="section-title reveal">Let's <span class="accent">Talk</span></h2>
+        <div class="section-card">
+          <div class="section-label reveal">Get in touch</div>
+          <h2 class="section-title reveal">Let's <span class="accent">Talk</span></h2>
 
-        <div class="contact-layout">
+          <div class="contact-layout">
 
-          <div class="reveal">
-            <p class="contact-blurb">
-              Whether you have a project in mind, a question, or just want to connect —
-              I'm always happy to hear from you. Drop me a message or reach out directly
-              by email.
-            </p>
-            <a href="mailto:info@kristof-kamin.de" class="contact-email-link">
-              <IconMail :size="13" />
-              info@kristof-kamin.de
-            </a>
+            <div class="reveal">
+              <p class="contact-blurb">
+                Whether you have a project in mind, a question, or just want to connect —
+                I'm always happy to hear from you. Drop me a message or reach out directly
+                by email.
+              </p>
+              <a href="mailto:info@kristof-kamin.de" class="contact-email-link">
+                <IconMail :size="13" />
+                info@kristof-kamin.de
+              </a>
+            </div>
+
+            <form class="contact-form reveal" @submit.prevent="sendMessage">
+              <div class="form-group">
+                <label class="form-label" for="f-name">Name</label>
+                <input id="f-name" v-model="form.name" class="form-input"
+                       type="text" placeholder="Your name" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="f-email">Email</label>
+                <input id="f-email" v-model="form.email" class="form-input"
+                       type="email" placeholder="your@email.com" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="f-msg">Message</label>
+                <textarea id="f-msg" v-model="form.message" class="form-textarea"
+                          rows="5" placeholder="Your message…" required />
+              </div>
+
+              <p v-if="formStatus" class="form-status" :class="formStatus.type">
+                {{ formStatus.text }}
+              </p>
+
+              <button class="btn-send" type="submit">
+                <span class="btn-send-text">Send Message →</span>
+              </button>
+            </form>
+
           </div>
-
-          <form class="contact-form reveal" @submit.prevent="sendMessage">
-            <div class="form-group">
-              <label class="form-label" for="f-name">Name</label>
-              <input id="f-name" v-model="form.name" class="form-input"
-                     type="text" placeholder="Your name" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="f-email">Email</label>
-              <input id="f-email" v-model="form.email" class="form-input"
-                     type="email" placeholder="your@email.com" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="f-msg">Message</label>
-              <textarea id="f-msg" v-model="form.message" class="form-textarea"
-                        rows="5" placeholder="Your message…" required />
-            </div>
-
-            <p v-if="formStatus" class="form-status" :class="formStatus.type">
-              {{ formStatus.text }}
-            </p>
-
-            <button class="btn-send" type="submit">
-              <span class="btn-send-text">Send Message →</span>
-            </button>
-          </form>
-
-        </div>
+        </div><!-- /.section-card -->
       </div>
     </section>
 
     <!-- ── FOOTER ─────────────────────────────────── -->
     <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-top">
-          <div>
-            <div class="footer-brand-name">Kristof<br><span class="accent">Kamin</span></div>
-            <div class="footer-tagline">// web developer since 2010</div>
+      <div class="footer-outer">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div>
+              <div class="footer-brand-name">Kristof<br><span class="accent">Kamin</span></div>
+              <div class="footer-tagline">// web developer since 2010</div>
+            </div>
+
+            <div class="footer-col">
+              <div class="footer-col-title">Navigate</div>
+              <ul>
+                <li v-for="link in footerNav" :key="link.href">
+                  <a :href="link.href">{{ link.label }}</a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="footer-col">
+              <div class="footer-col-title">Connect</div>
+              <ul>
+                <li v-for="s in socials" :key="s.url">
+                  <a :href="s.url" target="_blank" rel="noopener">{{ s.label }}</a>
+                </li>
+                <li><a href="mailto:info@kristof-kamin.de">Email</a></li>
+              </ul>
+            </div>
           </div>
 
-          <div class="footer-col">
-            <div class="footer-col-title">Navigate</div>
-            <ul>
-              <li v-for="link in footerNav" :key="link.href">
-                <a :href="link.href">{{ link.label }}</a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <div class="footer-col-title">Connect</div>
-            <ul>
-              <li v-for="s in socials" :key="s.url">
-                <a :href="s.url" target="_blank" rel="noopener">{{ s.label }}</a>
-              </li>
-              <li><a href="mailto:info@kristof-kamin.de">Email</a></li>
-            </ul>
+          <div class="footer-bottom">
+            <p class="footer-copy">© {{ new Date().getFullYear() }} Kristof Kamin. All rights reserved.</p>
+            <div class="footer-legal">
+              <RouterLink to="/imprint">Imprint</RouterLink>
+              <RouterLink to="/data-protection">Data Protection</RouterLink>
+            </div>
           </div>
         </div>
-
-        <div class="footer-bottom">
-          <p class="footer-copy">© {{ new Date().getFullYear() }} Kristof Kamin. All rights reserved.</p>
-          <div class="footer-legal">
-            <RouterLink to="/imprint">Imprint</RouterLink>
-            <RouterLink to="/data-protection">Data Protection</RouterLink>
-          </div>
-        </div>
-      </div>
+      </div><!-- /.footer-outer -->
     </footer>
 
   </main>

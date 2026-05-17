@@ -142,16 +142,35 @@
 
   /* ── SECTIONS shared ─────────────────────── */
 
-  .section-z { position: relative; z-index: 1; }
+  .section-z {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+  }
 
+  /* Scroll-padding container — no background */
   .section-inner {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 7rem 3rem;
+    padding: 4rem 2rem;
+  }
+
+  /* The visible frosted-glass card */
+  .section-card {
+    background: rgba(10, 13, 20, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(0, 229, 192, 0.10);
+    border-radius: 20px;
+    padding: 4rem 3.5rem;
+    box-shadow:
+            0 8px 40px rgba(0, 0, 0, 0.45),
+            0 0 0 1px rgba(255,255,255,0.02) inset;
   }
 
   @media (max-width: 768px) {
-    .section-inner { padding: 5rem 1.5rem; }
+    .section-inner { padding: 2.5rem 1rem; }
+    .section-card  { padding: 2.5rem 1.5rem; border-radius: 14px; }
   }
 
   .section-label {
@@ -295,7 +314,7 @@
 
   /* ── ABOUT ───────────────────────────────── */
 
-  #about { background: rgba(13, 17, 23, 0.82); }
+  #about { background: transparent; }
 
   .about-grid {
     display: grid;
@@ -372,7 +391,7 @@
 
   /* ── SKILLS ──────────────────────────────── */
 
-  #skills { background: rgba(7, 9, 13, 0.82); }
+  #skills { background: transparent; }
 
   .skills-layout {
     display: grid;
@@ -476,7 +495,7 @@
 
   /* ── TIMELINE ────────────────────────────── */
 
-  #work { background: rgba(13, 17, 23, 0.82); }
+  #work { background: transparent; }
 
   .timeline {
     position: relative;
@@ -537,7 +556,7 @@
 
   /* ── CONTACT ─────────────────────────────── */
 
-  #contact { background: rgba(7, 9, 13, 0.82); }
+  #contact { background: transparent; }
 
   .contact-layout {
     display: grid;
@@ -586,7 +605,7 @@
 
   .form-input,
   .form-textarea {
-    background: var(--bg2);
+    background: rgba(10,13,20,0.72);
     border: 1px solid rgba(90,100,120,0.2);
     color: var(--text);
     font-family: var(--font);
@@ -656,18 +675,29 @@
   /* ── FOOTER ──────────────────────────────── */
 
   .site-footer {
-    background: rgba(13, 17, 23, 0.88);
-    border-top: 1px solid var(--line);
+    background: transparent;
     position: relative; z-index: 1;
   }
 
+  .footer-outer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
   .footer-inner {
-    max-width: 1100px; margin: 0 auto;
-    padding: 4rem 3rem 2rem;
+    background: rgba(10, 13, 20, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(0, 229, 192, 0.10);
+    border-radius: 20px;
+    padding: 3.5rem 3rem 2rem;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.45);
   }
 
   @media (max-width: 768px) {
-    .footer-inner { padding: 3rem 1.5rem 1.5rem; }
+    .footer-outer { padding: 0 1rem 3rem; }
+    .footer-inner { padding: 2.5rem 1.5rem 1.5rem; border-radius: 14px; }
   }
 
   .footer-top {
