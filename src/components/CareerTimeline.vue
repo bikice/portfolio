@@ -55,7 +55,8 @@
 import SectionCard from "@/components/SectionCard.vue";
 
 const timeline = [
-  { period: '2017 – present', company: 'Open-Xchange AG',                 type: 'work', description: 'Web Application Developer — Developing a RIA Office Suite and cloud-based storage platform' },
+  { period: '2020 – present', company: 'Books on Demand GmbH',            type: 'work', description: 'Senior Full Stack Developer — Backend with PHP, Symfony, TYPO3. Frontend with Vue2/Vue3, Bootstrap.' },
+  { period: '2017 – 2020',    company: 'Open-Xchange AG',                 type: 'work', description: 'Web Application Developer — Developing a RIA Office Suite and cloud-based storage platform' },
   { period: '2014 – 2017',    company: 'motory GmbH',                     type: 'work', description: 'Full Stack Developer — Developing a social media platform' },
   { period: '2012 – 2014',    company: 'onitec Werbeagentur GmbH',        type: 'work', description: 'Full Stack Developer — Websites, webshops and web applications. Linux administration and networking.' },
   { period: '2008 – present', company: 'Freelancer',                      type: 'work', description: 'Web Developer — Development of websites and webshops for clients' },
