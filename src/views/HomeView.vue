@@ -76,59 +76,71 @@
     </section>
 
     <!-- ── SKILLS ─────────────────────────────────── -->
-    <section id="skills" class="section-z">
-      <div class="section-inner">
-        <div class="section-card">
-          <div class="section-label reveal">Expertise</div>
-          <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
+    <!--
+      Scroll-driven sticky skills:
+      The section is given artificial height (via .skills-scroll-track) so there
+      is scroll room for each category. The card is position:sticky so it stays
+      on screen while scroll progresses through the track.
+    -->
+    <section id="skills" class="section-z skills-scroll-section" ref="skillsSection">
+      <!-- Tall scroll track — height set by JS based on category count -->
+      <div class="skills-scroll-track" ref="skillsTrack">
 
-          <div class="skills-layout">
+        <!-- Sticky card — stays in viewport while track scrolls past -->
+        <div class="section-inner skills-sticky-wrap">
+          <div class="section-card">
+            <div class="section-label reveal">Expertise</div>
+            <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
 
-            <!-- Left: tab navigation -->
-            <div class="skill-nav reveal-stagger">
-              <div
-                  v-for="(cat, idx) in skillCats"
-                  :key="cat.id"
-                  class="skill-nav-item"
-                  :class="{ active: activeSkill === cat.id }"
-                  @click="setSkill(cat.id)"
-              >
-                <span class="skill-nav-num">0{{ idx + 1 }}</span>
-                <span class="skill-nav-name">{{ cat.name }}</span>
-                <div class="skill-nav-track">
-                  <div class="skill-nav-fill" :style="{ width: cat.avgPct + '%' }" />
-                </div>
-              </div>
-            </div>
+            <div class="skills-layout">
 
-            <!-- Right: active panel (sticky) -->
-            <div class="skills-panel-host">
-              <transition name="panel-fade" mode="out-in">
-                <div :key="activeSkill" class="skill-panel active">
-                  <div class="skill-panel-title">{{ currentCat.name }}</div>
-                  <div
-                      v-for="skill in currentCat.skills"
-                      :key="skill.name"
-                      class="skill-row"
-                  >
-                    <div class="skill-row-label">
-                      <span>{{ skill.name }}</span>
-                      <span>{{ skill.pct }}%</span>
-                    </div>
-                    <div class="skill-track">
-                      <div
-                          class="skill-fill"
-                          :style="{ width: skillsVisible ? skill.pct + '%' : '0%' }"
-                      />
-                    </div>
+              <!-- Left: category nav (shows active state) -->
+              <div class="skill-nav reveal-stagger">
+                <div
+                    v-for="(cat, idx) in skillCats"
+                    :key="cat.id"
+                    class="skill-nav-item"
+                    :class="{ active: activeSkill === cat.id }"
+                    @click="setSkill(cat.id)"
+                >
+                  <span class="skill-nav-num">0{{ idx + 1 }}</span>
+                  <span class="skill-nav-name">{{ cat.name }}</span>
+                  <div class="skill-nav-track">
+                    <div class="skill-nav-fill" :style="{ width: cat.avgPct + '%' }" />
                   </div>
                 </div>
-              </transition>
-            </div>
+              </div>
 
-          </div>
-        </div><!-- /.section-card -->
-      </div>
+              <!-- Right: skill bars for active category -->
+              <div class="skills-panel-host">
+                <transition name="panel-fade" mode="out-in">
+                  <div :key="activeSkill" class="skill-panel active">
+                    <div class="skill-panel-title">{{ currentCat.name }}</div>
+                    <div
+                        v-for="skill in currentCat.skills"
+                        :key="skill.name"
+                        class="skill-row"
+                    >
+                      <div class="skill-row-label">
+                        <span>{{ skill.name }}</span>
+                        <span>{{ skill.pct }}%</span>
+                      </div>
+                      <div class="skill-track">
+                        <div
+                            class="skill-fill"
+                            :style="{ width: skillsVisible ? skill.pct + '%' : '0%' }"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+
+            </div>
+          </div><!-- /.section-card -->
+        </div><!-- /.skills-sticky-wrap -->
+
+      </div><!-- /.skills-scroll-track -->
     </section>
 
     <!-- ── WORK ───────────────────────────────────── -->
@@ -253,7 +265,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, reactive } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
 
 /* ── Inline SVG icon components ──────────────────── */
 const IconLinkedIn = {
@@ -379,8 +391,13 @@ function type() {
 /* ── Skills panel ─────────────────────────────────── */
 const activeSkill   = ref('frontend')
 const skillsVisible = ref(false)
+const skillsSection = ref(null)   // <section> ref
+const skillsTrack   = ref(null)   // scroll-track ref
 
 const currentCat = computed(() => skillCats.find(c => c.id === activeSkill.value))
+
+// PER-CATEGORY scroll height in px (how much scroll each category gets)
+const STEP_PX = 420
 
 function setSkill(id) {
   activeSkill.value = id
@@ -432,27 +449,49 @@ onMounted(() => {
 
   document.querySelectorAll('.tl-entry').forEach(el => tlIo.observe(el))
 
-  // skills section → trigger bars + auto-step on scroll
-  const skillsSection = document.getElementById('skills')
-  const skillsIo = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      skillsVisible.value = true
+  // ── Sticky skills scroll logic ─────────────────────────
+  // Set the track height so there is STEP_PX of scroll per category
+  // The card itself is position:sticky so it stays visible the whole time.
+  nextTick(() => {
+    const track = skillsTrack.value
+    if (!track) return
+
+    // Card height + padding (measured after render)
+    const cardEl = track.querySelector('.section-card')
+    const cardH  = cardEl ? cardEl.offsetHeight : 500
+    const navH   = 80   // approx nav bar height
+
+    // Total track height:
+    //   cardH + navH  → space needed so the sticky card is fully visible when pinned
+    //   skillCats.length * STEP_PX → one full STEP_PX dwell per category (incl. last)
+    track.style.height = (cardH + navH + skillCats.length * STEP_PX) + 'px'
+
+    // Trigger skill bars once section enters view
+    const skillsIo = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) skillsVisible.value = true
+    }, { threshold: 0.1 })
+    skillsIo.observe(skillsSection.value)
+
+    // Map scroll position within track → active category
+    function onScroll() {
+      const track = skillsTrack.value
+      if (!track) return
+      const rect     = track.getBoundingClientRect()
+      const cardH    = track.querySelector('.section-card')?.offsetHeight ?? 500
+      // scrolled past the top of the track (positive = scrolled in)
+      const scrolled = -(rect.top - navH)
+      // active zone starts after the card has pinned (one viewport of scroll room)
+      const zoneStart = 0
+      const zoneEnd   = STEP_PX * (skillCats.length - 1)
+      const clamped   = Math.max(0, Math.min(zoneEnd, scrolled - zoneStart))
+      const idx       = Math.min(skillCats.length - 1, Math.floor(clamped / STEP_PX))
+      const newId     = skillCats[idx].id
+      if (newId !== activeSkill.value) setSkill(newId)
     }
-  }, { threshold: 0.2 })
-  skillsIo.observe(skillsSection)
 
-  // scroll-driven skill step
-  function onScroll() {
-    const rect = skillsSection.getBoundingClientRect()
-    const total = skillsSection.offsetHeight - window.innerHeight * 0.6
-    const progress = Math.max(0, Math.min(1, -rect.top / Math.max(1, total)))
-    const idx = Math.min(skillCats.length - 1, Math.floor(progress * skillCats.length))
-    const newId = skillCats[idx].id
-    if (newId !== activeSkill.value) setSkill(newId)
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true })
-  onUnmounted(() => window.removeEventListener('scroll', onScroll))
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onUnmounted(() => window.removeEventListener('scroll', onScroll))
+  })
 })
 
 onUnmounted(() => clearTimeout(twTimer))

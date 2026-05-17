@@ -393,6 +393,25 @@
 
   #skills { background: transparent; }
 
+  /* The section has no set height — it gets height from the JS-sized track */
+  .skills-scroll-section {
+    position: relative;
+  }
+
+  /* Tall scroll track — JS sets its height to create scroll room per category */
+  .skills-scroll-track {
+    position: relative;
+    width: 100%;
+    /* height set by JS */
+  }
+
+  /* The inner wrapper is sticky: pins to top of viewport while track scrolls */
+  .skills-sticky-wrap {
+    position: sticky;
+    top: 80px;           /* below the nav bar */
+    z-index: 2;
+  }
+
   .skills-layout {
     display: grid;
     grid-template-columns: 1fr 1.1fr;
@@ -454,7 +473,7 @@
   }
 
   .skills-panel-host {
-    position: sticky; top: 120px;
+    /* sticky handled by .skills-sticky-wrap on the whole card */
   }
 
   .skill-panel {
