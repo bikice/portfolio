@@ -72,7 +72,6 @@ const timeline = [
 .tl2-root {
   position: relative;
   margin-top: 3.5rem;
-  padding-left: 220px;
 }
 
 /* ── Legend ───────────────────────────────────────── */
@@ -80,7 +79,6 @@ const timeline = [
   display: flex;
   gap: 2rem;
   margin-bottom: 2.5rem;
-  margin-left: -220px;
 }
 .tl2-leg-item {
   display: flex;
@@ -100,10 +98,11 @@ const timeline = [
 .tl2-leg-work .tl2-leg-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 .tl2-leg-edu  .tl2-leg-dot { background: #a78bfa;       box-shadow: 0 0 6px #a78bfa; }
 
-/* ── Vertical spine ───────────────────────────────── */
+/* ── Vertical spine — sits over the node column ───── */
 .tl2-spine {
   position: absolute;
-  left: 220px;
+  /* col 1 = 180px, col 2 (node) = 20px → centre of node col = 180 + 10 = 190px */
+  left: 190px;
   top: 0;
   bottom: 0;
   width: 1px;
@@ -125,21 +124,21 @@ const timeline = [
   filter: blur(1px);
 }
 
-/* ── Entry row ────────────────────────────────────── */
+/* ── Entry row: [period 180px] [node 20px] [card 1fr] */
 .tl2-entry {
   position: relative;
   display: grid;
-  grid-template-columns: 20px 1fr;
+  grid-template-columns: 180px 20px 1fr;
+  column-gap: 0;
   align-items: flex-start;
   padding: 1.6rem 0;
 }
 
 /* ── Period label ─────────────────────────────────── */
 .tl2-period-wrap {
-  position: absolute;
-  left: -220px;
-  width: 200px;
+  grid-column: 1;
   padding-top: 0.15rem;
+  padding-right: 1.25rem;
   text-align: right;
 }
 .tl2-period {
@@ -154,19 +153,20 @@ const timeline = [
   white-space: nowrap;
   transition: color 0.3s, border-color 0.3s;
 }
-.tl2-entry:hover            .tl2-period { color: var(--accent); border-color: rgba(0,229,192,0.25); }
-.tl2-entry.edu:hover        .tl2-period { color: #a78bfa;       border-color: rgba(167,139,250,0.25); }
+.tl2-entry:hover     .tl2-period { color: var(--accent); border-color: rgba(0,229,192,0.25); }
+.tl2-entry.edu:hover .tl2-period { color: #a78bfa;       border-color: rgba(167,139,250,0.25); }
 
 /* ── Node ─────────────────────────────────────────── */
 .tl2-node {
-  grid-column: 1;
+  grid-column: 2;
   position: relative;
   width: 20px;
   height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0.1rem;
+  margin-top: 0.5rem;
+  z-index: 1;
 }
 .tl2-node-ring {
   position: absolute;
@@ -194,7 +194,7 @@ const timeline = [
 
 /* ── Card ─────────────────────────────────────────── */
 .tl2-card {
-  grid-column: 2;
+  grid-column: 3;
   margin-left: 2rem;
   padding: 1.4rem 1.6rem;
   background: rgba(255,255,255,0.025);
@@ -255,21 +255,23 @@ const timeline = [
 
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 768px) {
-  .tl2-root        { padding-left: 0; }
-  .tl2-legend      { margin-left: 0; }
-  .tl2-spine       { left: 9px; }
+  .tl2-spine { left: 9px; }
 
-  .tl2-entry       { padding: 1.2rem 0; }
+  .tl2-entry {
+    grid-template-columns: 20px 1fr;
+    grid-template-rows: auto auto;
+    padding: 1.2rem 0;
+  }
 
   .tl2-period-wrap {
-    position: static;
-    width: auto;
-    text-align: left;
     grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: left;
+    padding-right: 0;
+    padding-left: 2.2rem;
     margin-bottom: 0.6rem;
-    margin-left: 2.2rem;
   }
-  .tl2-node        { grid-column: 1; grid-row: 2; }
-  .tl2-card        { grid-column: 2; grid-row: 2; margin-left: 1rem; }
+  .tl2-node { grid-column: 1; grid-row: 2; }
+  .tl2-card { grid-column: 2; grid-row: 2; margin-left: 1rem; }
 }
 </style>
