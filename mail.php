@@ -38,8 +38,8 @@ $name    = str_replace(["\r", "\n"], '', $name);
 $email   = str_replace(["\r", "\n"], '', $email);
 
 // Build mail
-$headers  = "From: =?UTF-8?B?" . base64_encode($name) . "?= <{$email}>\r\n";
-$headers .= "Reply-To: {$email}\r\n";
+$headers  = "From: Contact Form <noreply@kristof-kamin.de>\r\n";
+$headers .= "Reply-To: =?UTF-8?B?" . base64_encode($name) . "?= <{$email}>\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
@@ -48,7 +48,7 @@ $mailBody = "Name:    {$name}\n"
     . "---------------------------------------\n"
     . $message;
 
-$sent = mail(TO, SUBJECT, $mailBody, $headers);
+$sent = mail(TO, SUBJECT, $mailBody, $headers, '-f info@kristof-kamin.de');
 
 if ($sent) {
     echo json_encode(['ok' => true]);
