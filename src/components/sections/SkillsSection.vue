@@ -2,8 +2,8 @@
   <section id="skills" class="section-z" ref="wrapEl">
     <div class="sk-track" ref="trackEl">
       <div class="sk-sticky" ref="stickyEl">
-        <div class="section-inner">
-          <div class="section-card" ref="cardEl">
+        <div class="sk-inner">
+          <div class="sk-card" ref="cardEl">
 
             <div class="sk-header" ref="headerEl">
               <div class="section-label reveal">Expertise</div>
@@ -79,19 +79,19 @@ const skillCats = [
     id: 'backend', name: 'Backend & DB', avgPct: 98,
     skills: [
       { name: 'PHP',              pct: 100 },
-      { name: 'MySQL / Doctrine', pct: 95  },
-      { name: 'Node',             pct: 80  },
-      { name: 'Java',             pct: 45  },
+      { name: 'MySQL / Doctrine', pct: 95 },
+      { name: 'Node',             pct: 80 },
+      { name: 'Java',             pct: 45 },
     ],
   },
   {
     id: 'javascript', name: 'JavaScript', avgPct: 92,
     skills: [
       { name: 'JavaScript (ES6+)', pct: 100 },
-      { name: 'TypeScript',        pct: 95  },
-      { name: 'Vue2 / Vue3',       pct: 90  },
-      { name: 'React',             pct: 70  },
-      { name: 'Angular',           pct: 60  },
+      { name: 'TypeScript',        pct: 95 },
+      { name: 'Vue2 / Vue3',       pct: 90 },
+      { name: 'React',             pct: 70 },
+      { name: 'Angular',           pct: 60 },
     ],
   },
   {
@@ -111,6 +111,14 @@ const skillCats = [
       { name: 'Linux Administration',   pct: 90 },
       { name: 'PHPUnit / CSFixer',      pct: 90 },
       { name: 'Selenium / Codeception', pct: 85 },
+    ],
+  },
+  {
+    id: 'seo', name: 'Search Engine Optimization', avgPct: 70,
+    skills: [
+      { name: 'Structured Data',        pct: 100 },
+      { name: 'Google Search Console',  pct: 80 },
+      { name: 'Adwords / Keywords',     pct: 75 },
     ],
   },
 ]
@@ -146,19 +154,28 @@ onMounted(() => {
 
     const panels = Array.from(belt.children)
 
-    // Panel height = max of left nav height and tallest right panel.
-    // This ensures the window is always tall enough to show all skill rows,
-    // and the belt step matches the left column exactly so nothing is cut off.
+    // Measure how much vertical space the card chrome takes (padding + header + body margin)
+    // so panelH never makes the card taller than the available viewport.
+    const headerH    = headerEl.value ? headerEl.value.offsetHeight : 0
+    const cardEl_    = stickyEl.value?.querySelector('.sk-card')
+    const cardPadV   = cardEl_ ? parseFloat(getComputedStyle(cardEl_).paddingTop) + parseFloat(getComputedStyle(cardEl_).paddingBottom) : 64
+    const innerEl_   = stickyEl.value?.querySelector('.sk-inner')
+    const innerPadV  = innerEl_ ? parseFloat(getComputedStyle(innerEl_).paddingTop) + parseFloat(getComputedStyle(innerEl_).paddingBottom) : 48
+    const bodyMargin = 32 // sk-body margin-top (2rem)
+    const chrome     = cardPadV + innerPadV + headerH + bodyMargin
+
+    const maxWindowH  = Math.max(window.innerHeight - NAV_H - chrome, 180)
     const rightPanelH = Math.max(...panels.map(p => p.offsetHeight))
     const leftNavH    = navEl.value ? navEl.value.offsetHeight : 0
-    const panelH      = Math.max(rightPanelH, leftNavH)
+    const panelH      = Math.min(Math.max(rightPanelH, leftNavH), maxWindowH)
 
     // Force every belt panel to that height so the belt step is uniform
     panels.forEach(p => { p.style.minHeight = panelH + 'px' })
 
     const totalTravel = panelH * (skillCats.length - 1)
 
-    window_.style.height = panelH + 'px'
+    window_.style.height    = panelH + 'px'
+    window_.style.maxHeight = panelH + 'px'
     track.style.height   = (card.offsetHeight + totalTravel) + 'px'
 
     scrollHandler = () => {
@@ -197,11 +214,35 @@ onUnmounted(() => {
   z-index: 2;
 }
 
+/* Scoped replacements for section-inner / section-card with compact padding */
+.sk-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+.sk-card {
+  background: rgba(10, 13, 20, 0.72);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(0, 229, 192, 0.10);
+  border-radius: 20px;
+  padding: 2rem 3.5rem;
+  box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+
+@media (max-width: 768px) {
+  .sk-inner { padding: 1rem 1rem; }
+  .sk-card  { padding: 1.5rem 1.5rem; border-radius: 14px; }
+}
+
 .sk-body {
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: 4rem;
-  margin-top: 4rem;
+  margin-top: 2rem;
   align-items: start;
 }
 
@@ -211,6 +252,7 @@ onUnmounted(() => {
 
 .sk-window {
   overflow: hidden;
+  /* height set by JS to fit within viewport */
 }
 
 .sk-belt {

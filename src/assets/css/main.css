@@ -236,7 +236,7 @@
 
   .hero-sub {
     font-size: clamp(0.85rem, 2vw, 1.05rem);
-    color: var(--muted);
+    color: var(--text);
     font-weight: 400;
     margin-bottom: 3rem;
     opacity: 0;
@@ -263,9 +263,12 @@
     display: inline-flex; align-items: center; gap: 0.5rem;
     font-size: 0.7rem;
     letter-spacing: 0.1em;
-    color: var(--muted);
+    color: var(--text);
     padding: 0.5rem 0.9rem;
-    border: 1px solid rgba(90,100,120,0.3);
+    border: 1px solid rgba(221, 227, 237, 0.25);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     transition: color 0.25s, border-color 0.25s, background 0.25s;
   }
 
@@ -280,7 +283,7 @@
     display: flex; align-items: center; gap: 0.8rem;
     font-size: 0.65rem;
     letter-spacing: 0.2em;
-    color: var(--muted);
+    color: var(--text);
     text-transform: uppercase;
     opacity: 0;
     animation: fadeUp 0.7s 1.3s forwards;
@@ -305,7 +308,7 @@
 
   .hero-deco-text {
     font-size: 0.62rem;
-    color: var(--muted);
+    color: var(--text);
     letter-spacing: 0.22em;
     text-transform: uppercase;
   }
