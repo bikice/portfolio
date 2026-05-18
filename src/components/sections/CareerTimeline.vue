@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import SectionCard from "@/components/SectionCard.vue";
+import SectionCard from "@/components/layout/SectionCard.vue";
 
 const timeline = [
   { period: '2020 – present', company: 'Books on Demand GmbH',            type: 'work', description: 'Senior Full Stack Developer — Backend with PHP, Symfony, TYPO3. Frontend with Vue2/Vue3, Bootstrap.' },

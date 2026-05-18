@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import SectionCard from '@/components/SectionCard.vue'
+import SectionCard from '@/components/layout/SectionCard.vue'
 
 const aboutMeta = [
   { key: 'born',      val: '1st November, 1984'                                  },

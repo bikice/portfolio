@@ -49,7 +49,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import ParticleBackground from '@/components/ParticleBackground.vue'
+import ParticleBackground from '@/components/layout/ParticleBackground.vue'
 import { useScrollSpy }   from '@/composables/useScrollSpy.js'
 
 const route      = useRoute()

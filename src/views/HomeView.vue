@@ -10,12 +10,12 @@
 </template>
 
 <script setup>
-import HeroSection    from '@/components/HeroSection.vue'
-import AboutSection   from '@/components/AboutSection.vue'
-import SkillsSection  from '@/components/SkillsSection.vue'
-import CareerTimeline from '@/components/CareerTimeline.vue'
-import ContactSection from '@/components/ContactSection.vue'
-import SiteFooter     from '@/components/SiteFooter.vue'
+import HeroSection    from '@/components/sections/HeroSection.vue'
+import AboutSection   from '@/components/sections/AboutSection.vue'
+import SkillsSection  from '@/components/sections/SkillsSection.vue'
+import CareerTimeline from '@/components/sections/CareerTimeline.vue'
+import ContactSection from '@/components/sections/ContactSection.vue'
+import SiteFooter     from '@/components/layout/SiteFooter.vue'
 import { useReveal }  from '@/composables/useReveal.js'
 
 useReveal([

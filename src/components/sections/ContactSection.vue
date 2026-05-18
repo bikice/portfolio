@@ -48,7 +48,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { IconMail }      from '@/icons/index.js'
-import SectionCard       from '@/components/SectionCard.vue'
+import SectionCard       from '@/components/layout/SectionCard.vue'
 
 const form       = reactive({ name: '', email: '', message: '' })
 const formStatus = ref(null)
