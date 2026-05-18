@@ -102,7 +102,7 @@ const footerNav = [
 
 .f-tagline {
   font-size: 0.65rem;
-  color: var(--muted);
+  color: var(--text);
   letter-spacing: 0.14em;
   line-height: 1.9;
   margin-bottom: 1.2rem;
@@ -114,7 +114,7 @@ const footerNav = [
   gap: 0.45rem;
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  color: var(--muted);
+  color: var(--text);
   border: 1px solid rgba(0, 229, 192, 0.15);
   padding: 0.3rem 0.7rem;
 }
@@ -155,7 +155,7 @@ const footerNav = [
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text);
   text-decoration: none;
   position: relative;
   transition: color 0.25s;
@@ -186,8 +186,8 @@ const footerNav = [
   justify-content: center;
   width: 32px;
   height: 32px;
-  color: var(--muted);
-  border: 1px solid rgba(90, 100, 120, 0.2);
+  color: var(--text);
+  border: 1px solid rgba(221, 227, 237, 0.25);
   text-decoration: none;
   transition: color 0.25s, border-color 0.25s, background 0.25s, transform 0.2s;
 }
@@ -210,7 +210,7 @@ const footerNav = [
 
 .f-copy {
   font-size: 0.6rem;
-  color: var(--muted);
+  color: var(--text);
   letter-spacing: 0.12em;
 }
 
@@ -221,7 +221,7 @@ const footerNav = [
 
 .f-legal a {
   font-size: 0.6rem;
-  color: var(--muted);
+  color: var(--text);
   letter-spacing: 0.12em;
   text-decoration: none;
   transition: color 0.25s;

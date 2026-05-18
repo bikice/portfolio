@@ -146,9 +146,9 @@ const timeline = [
   font-size: 0.58rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text);
   padding: 0.25rem 0.6rem;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(221, 227, 237, 0.25);
   background: rgba(255,255,255,0.02);
   white-space: nowrap;
   transition: color 0.3s, border-color 0.3s;
@@ -237,7 +237,7 @@ const timeline = [
 }
 .tl2-card-desc {
   font-size: 0.72rem;
-  color: var(--muted);
+  color: var(--text);
   line-height: 1.7;
   letter-spacing: 0.02em;
 }
