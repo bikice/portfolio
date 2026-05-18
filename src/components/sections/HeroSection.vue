@@ -1,5 +1,5 @@
 <template>
-  <section id="hero" class="section-z" style="position:relative;">
+  <section id="hero" class="section-z" style="position:relative; min-height:100vh;">
     <div style="max-width:1100px; margin:0 auto; padding:0 3rem; padding-top:80px; min-height:100vh; display:flex; flex-direction:column; justify-content:center;">
 
       <p class="hero-tag">// web developer &amp; programmer</p>
@@ -24,18 +24,20 @@
         </a>
       </div>
 
-      <div class="hero-scroll-hint">
-        <div class="scroll-line" />
-        scroll to explore
-      </div>
-
-      <div class="hero-deco" aria-hidden="true">
-        <div class="hero-deco-line" style="width:110px" />
-        <div class="hero-deco-text">since 2001</div>
-        <div class="hero-deco-line" style="width:55px" />
-      </div>
-
     </div>
+
+    <!-- Positioned against the section (min-height:100vh) so bottom values are always visible -->
+    <div class="hero-scroll-hint">
+      <div class="scroll-line" />
+      scroll to explore
+    </div>
+
+    <div class="hero-deco" aria-hidden="true">
+      <div class="hero-deco-line" style="width:110px" />
+      <div class="hero-deco-text">since 2001</div>
+      <div class="hero-deco-line" style="width:55px" />
+    </div>
+
   </section>
 </template>
 

@@ -52,7 +52,7 @@ const aboutMeta = [
   gap: 0.45rem;
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  color: var(--muted);
+  color: var(--text);
   border: 1px solid rgba(0, 229, 192, 0.15);
   padding: 0.3rem 0.7rem;
   margin-bottom: 1.5rem;
