@@ -189,7 +189,7 @@ const translations = {
                     heading: 'Kontakt',
                     paragraphs: [
                         'Kristof Kamin<br />Hein-Block-Str. 7<br />21423 Drage',
-                        'Tel: 0179 / 74 79 711<br />E-Mail: <a href="mailto:info@kristof-kamin.de">info@kristof-kamin.de</a>',
+                        'E-Mail: <a href="mailto:info@kristof-kamin.de">info@kristof-kamin.de</a>',
                     ],
                 },
                 {
@@ -415,7 +415,7 @@ const translations = {
                     heading: 'Contact',
                     paragraphs: [
                         'Kristof Kamin<br />Hein-Block-Str. 7<br />21423 Drage',
-                        'Tel: 0179 / 74 79 711<br />E-Mail: <a href="mailto:info@kristof-kamin.de">info@kristof-kamin.de</a>',
+                        'E-Mail: <a href="mailto:info@kristof-kamin.de">info@kristof-kamin.de</a>',
                     ],
                 },
                 {
@@ -434,7 +434,7 @@ const translations = {
                     heading: '§ 3 Copyright',
                     paragraphs: [
                         'The content published on this website is subject to German copyright and ancillary copyright law. Any exploitation not permitted by German copyright and ancillary copyright law requires the prior written consent of the provider or the respective rights holder.',
-                        'Source: <a href="https://www.juraforum.de/impressum-generator/" target="_blank" rel="noopener">Impressum template by JuraForum.de</a>',
+                        'Source: <a href="https://www.juraforum.de/impressum-generator/" target="_blank" rel="noopener">Imprint template by JuraForum.de</a>',
                     ],
                 },
             ],
