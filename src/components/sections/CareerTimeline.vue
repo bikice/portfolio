@@ -1,16 +1,16 @@
 <template>
   <SectionCard id="work">
-    <div class="section-label reveal">Career</div>
-    <h2 class="section-title reveal">Work &amp; <span class="accent">Education</span></h2>
+    <div class="section-label reveal">{{ t.work.label }}</div>
+    <h2 class="section-title reveal">{{ t.work.title }} <span class="accent">{{ t.work.titleAccent }}</span></h2>
     <div class="tl2-root">
 
       <!-- Legend -->
       <div class="tl2-legend reveal">
         <span class="tl2-leg-item tl2-leg-work">
-          <span class="tl2-leg-dot" />Work
+          <span class="tl2-leg-dot" />{{ t.work.legendWork }}
         </span>
         <span class="tl2-leg-item tl2-leg-edu">
-          <span class="tl2-leg-dot" />Education
+          <span class="tl2-leg-dot" />{{ t.work.legendEdu }}
         </span>
       </div>
 
@@ -21,8 +21,8 @@
 
       <!-- Entries -->
       <div
-          v-for="(entry, i) in timeline"
-          :key="entry.company + i"
+          v-for="(entry, i) in t.work.timeline"
+          :key="i"
           class="tl2-entry tl-entry"
           :class="entry.type"
           :style="{ transitionDelay: (i * 0.09) + 's' }"
@@ -40,7 +40,7 @@
 
         <!-- Card -->
         <div class="tl2-card">
-          <div class="tl2-card-type">{{ entry.type === 'work' ? '// work' : '// edu' }}</div>
+          <div class="tl2-card-type">{{ entry.type === 'work' ? t.work.typeWork : t.work.typeEdu }}</div>
           <div class="tl2-card-company">{{ entry.company }}</div>
           <div class="tl2-card-desc">{{ entry.description }}</div>
           <div class="tl2-card-bar" />
@@ -52,19 +52,10 @@
 </template>
 
 <script setup>
-import SectionCard from "@/components/layout/SectionCard.vue";
+import SectionCard from "@/components/layout/SectionCard.vue"
+import { useI18n } from '@/composables/useI18n.js'
 
-const timeline = [
-  { period: '2020 – present', company: 'Books on Demand GmbH',            type: 'work', description: 'Senior Full Stack Developer — Backend with PHP, Symfony, TYPO3. Frontend with Vue2/Vue3, Bootstrap.' },
-  { period: '2017 – 2020',    company: 'Open-Xchange AG',                 type: 'work', description: 'Web Application Developer — Developing a RIA Office Suite and cloud-based storage platform' },
-  { period: '2014 – 2017',    company: 'motory GmbH',                     type: 'work', description: 'Full Stack Developer — Developing a social media platform' },
-  { period: '2012 – 2014',    company: 'onitec Werbeagentur GmbH',        type: 'work', description: 'Full Stack Developer — Websites, webshops and web applications. Linux administration and networking.' },
-  { period: '2008 – present', company: 'Freelancer',                      type: 'work', description: 'Web Developer — Development of websites and webshops for clients' },
-  { period: '2008 – 2014',    company: 'Jade Hochschule',                 type: 'edu',  description: 'Bachelor of Science: Economic Computer Science' },
-  { period: '2006 – 2009',    company: 'Hermes Logistik Bremen',          type: 'work', description: 'Creating maps and route systems for package delivery' },
-  { period: '2004 – 2005',    company: 'Rheinmetall Defence Electronics', type: 'work', description: 'IT Specialist — Remote control for power plant simulator, tactical navigation system, interface to a mobile robot' },
-  { period: '2001 – 2004',    company: 'Rheinmetall Defence Electronics', type: 'edu',  description: 'Education: IT Specialist for Application Development' },
-]
+const { t } = useI18n()
 </script>
 
 <style scoped>
@@ -98,10 +89,9 @@ const timeline = [
 .tl2-leg-work .tl2-leg-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 .tl2-leg-edu  .tl2-leg-dot { background: #a78bfa;       box-shadow: 0 0 6px #a78bfa; }
 
-/* ── Vertical spine — sits over the node column ───── */
+/* ── Vertical spine ───────────────────────────────── */
 .tl2-spine {
   position: absolute;
-  /* col 1 = 180px, col 2 (node) = 20px → centre of node col = 180 + 10 = 190px */
   left: 190px;
   top: 0;
   bottom: 0;
@@ -242,7 +232,7 @@ const timeline = [
   letter-spacing: 0.02em;
 }
 
-/* ── Reveal (hooks into global useReveal / .tl-entry) ─ */
+/* ── Reveal ───────────────────────────────────────── */
 .tl2-entry.tl-entry {
   opacity: 0;
   transform: translateX(-18px);

@@ -8,16 +8,16 @@
 
         <div class="f-brand">
           <a href="#hero" class="f-logo">KK<span>.</span></a>
-          <p class="f-tagline">// web developer &amp; programmer<br>since 2010</p>
+          <p class="f-tagline">{{ t.footer.tagline }}</p>
           <div class="f-status">
             <span class="f-status-dot" />
-            Available for projects
+            {{ t.footer.available }}
           </div>
         </div>
 
         <div class="f-right">
           <nav class="f-nav">
-            <a v-for="link in footerNav" :key="link.href" :href="link.href">
+            <a v-for="link in t.footer.nav" :key="link.href" :href="link.href">
               {{ link.label }}
             </a>
           </nav>
@@ -45,8 +45,8 @@
       <div class="f-bottom">
         <span class="f-copy">© {{ year }} Kristof Kamin</span>
         <div class="f-legal">
-          <RouterLink to="/imprint">Imprint</RouterLink>
-          <RouterLink to="/data-protection">Data Protection</RouterLink>
+          <RouterLink to="/imprint">{{ t.footer.imprint }}</RouterLink>
+          <RouterLink to="/data-protection">{{ t.footer.dataProtection }}</RouterLink>
         </div>
       </div>
 
@@ -57,16 +57,10 @@
 
 <script setup>
 import { socials, IconMail } from '@/icons/index.js'
+import { useI18n }           from '@/composables/useI18n.js'
 
-const year = new Date().getFullYear()
-
-const footerNav = [
-  { href: '#hero',    label: 'Home'    },
-  { href: '#about',   label: 'About'   },
-  { href: '#skills',  label: 'Skills'  },
-  { href: '#work',    label: 'Work'    },
-  { href: '#contact', label: 'Contact' },
-]
+const { t } = useI18n()
+const year  = new Date().getFullYear()
 </script>
 
 <style scoped>
@@ -106,6 +100,7 @@ const footerNav = [
   letter-spacing: 0.14em;
   line-height: 1.9;
   margin-bottom: 1.2rem;
+  white-space: pre-line;
 }
 
 .f-status {

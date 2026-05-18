@@ -1,15 +1,11 @@
 <template>
   <SectionCard id="contact">
-    <div class="section-label reveal">Get in touch</div>
-    <h2 class="section-title reveal">Let's <span class="accent">Talk</span></h2>
+    <div class="section-label reveal">{{ t.contact.label }}</div>
+    <h2 class="section-title reveal">{{ t.contact.title }} <span class="accent">{{ t.contact.titleAccent }}</span></h2>
 
     <div class="contact-layout">
       <div class="reveal">
-        <p class="contact-blurb">
-          Whether you have a project in mind, a question, or just want to connect —
-          I'm always happy to hear from you. Drop me a message or reach out directly
-          by email.
-        </p>
+        <p class="contact-blurb">{{ t.contact.blurb }}</p>
         <a href="mailto:info@kristof-kamin.de" class="contact-email-link">
           <IconMail :size="13" />
           info@kristof-kamin.de
@@ -18,19 +14,19 @@
 
       <form class="contact-form reveal" @submit.prevent="sendMessage">
         <div class="form-group">
-          <label class="form-label" for="f-name">Name</label>
+          <label class="form-label" for="f-name">{{ t.contact.nameLabel }}</label>
           <input id="f-name" v-model="form.name" class="form-input"
-                 type="text" placeholder="Your name" required />
+                 type="text" :placeholder="t.contact.namePlaceholder" required />
         </div>
         <div class="form-group">
-          <label class="form-label" for="f-email">Email</label>
+          <label class="form-label" for="f-email">{{ t.contact.emailLabel }}</label>
           <input id="f-email" v-model="form.email" class="form-input"
-                 type="email" placeholder="your@email.com" required />
+                 type="email" :placeholder="t.contact.emailPlaceholder" required />
         </div>
         <div class="form-group">
-          <label class="form-label" for="f-msg">Message</label>
+          <label class="form-label" for="f-msg">{{ t.contact.messageLabel }}</label>
           <textarea id="f-msg" v-model="form.message" class="form-textarea"
-                    rows="5" placeholder="Your message…" required />
+                    rows="5" :placeholder="t.contact.messagePlaceholder" required />
         </div>
 
         <p v-if="formStatus" class="form-status" :class="formStatus.type">
@@ -38,7 +34,7 @@
         </p>
 
         <button class="btn-send" type="submit" :disabled="sending">
-          <span class="btn-send-text">{{ sending ? 'Sending…' : 'Send Message →' }}</span>
+          <span class="btn-send-text">{{ sending ? t.contact.sending : t.contact.send }}</span>
         </button>
       </form>
     </div>
@@ -49,6 +45,9 @@
 import { ref, reactive } from 'vue'
 import { IconMail }      from '@/icons/index.js'
 import SectionCard       from '@/components/layout/SectionCard.vue'
+import { useI18n }       from '@/composables/useI18n.js'
+
+const { t } = useI18n()
 
 const form       = reactive({ name: '', email: '', message: '' })
 const formStatus = ref(null)
@@ -70,7 +69,7 @@ async function sendMessage() {
     if (data.ok) {
       formStatus.value = {
         type: 'success',
-        text: `Thanks ${form.name}! Your message was sent. I'll get back to you soon.`,
+        text: t.value.contact.successMsg(form.name),
       }
       form.name = form.email = form.message = ''
       setTimeout(() => { formStatus.value = null }, 6000)
@@ -80,7 +79,7 @@ async function sendMessage() {
   } catch {
     formStatus.value = {
       type: 'error',
-      text: 'Something went wrong. Please try again or email me directly.',
+      text: t.value.contact.errorMsg,
     }
   } finally {
     sending.value = false

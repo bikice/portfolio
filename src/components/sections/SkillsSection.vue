@@ -6,8 +6,8 @@
           <div class="sk-card" ref="cardEl">
 
             <div class="sk-header" ref="headerEl">
-              <div class="section-label reveal">Expertise</div>
-              <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
+              <div class="section-label reveal">{{ t.skills.label }}</div>
+              <h2 class="section-title reveal">{{ t.skills.title }} <span class="accent">{{ t.skills.titleAccent }}</span></h2>
             </div>
 
             <div class="sk-body">
@@ -70,58 +70,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useI18n } from '@/composables/useI18n.js'
+
+const { t } = useI18n()
 
 const NAV_H = 80
 
-const skillCats = [
-  {
-    id: 'backend', name: 'Backend & DB', avgPct: 98,
-    skills: [
-      { name: 'PHP',              pct: 100 },
-      { name: 'MySQL / Doctrine', pct: 95 },
-      { name: 'Node',             pct: 80 },
-      { name: 'Java',             pct: 45 },
-    ],
-  },
-  {
-    id: 'javascript', name: 'JavaScript', avgPct: 92,
-    skills: [
-      { name: 'JavaScript (ES6+)', pct: 100 },
-      { name: 'TypeScript',        pct: 95 },
-      { name: 'Vue2 / Vue3',       pct: 90 },
-      { name: 'React',             pct: 70 },
-      { name: 'Angular',           pct: 60 },
-    ],
-  },
-  {
-    id: 'frontend', name: 'Frontend', avgPct: 88,
-    skills: [
-      { name: 'HTML / CSS',           pct: 95 },
-      { name: 'SASS / SCSS',          pct: 90 },
-      { name: 'Bootstrap / Tailwind', pct: 80 },
-      { name: 'Responsive / Mobile',  pct: 75 },
-    ],
-  },
-  {
-    id: 'tools', name: 'Tools & Systems', avgPct: 82,
-    skills: [
-      { name: 'Jetbrains PhpStorm',     pct: 100 },
-      { name: 'Git',                    pct: 95 },
-      { name: 'Linux Administration',   pct: 90 },
-      { name: 'PHPUnit / CSFixer',      pct: 90 },
-      { name: 'Selenium / Codeception', pct: 85 },
-    ],
-  },
-  {
-    id: 'seo', name: 'Search Engine Optimization', avgPct: 70,
-    skills: [
-      { name: 'Structured Data',        pct: 100 },
-      { name: 'Google Search Console',  pct: 80 },
-      { name: 'Adwords / Keywords',     pct: 75 },
-    ],
-  },
-]
+const skillCats = computed(() => t.value.skills.cats)
 
 const activeIdx     = ref(0)
 const skillsVisible = ref(false)
@@ -154,14 +110,12 @@ onMounted(() => {
 
     const panels = Array.from(belt.children)
 
-    // Measure how much vertical space the card chrome takes (padding + header + body margin)
-    // so panelH never makes the card taller than the available viewport.
     const headerH    = headerEl.value ? headerEl.value.offsetHeight : 0
     const cardEl_    = stickyEl.value?.querySelector('.sk-card')
     const cardPadV   = cardEl_ ? parseFloat(getComputedStyle(cardEl_).paddingTop) + parseFloat(getComputedStyle(cardEl_).paddingBottom) : 64
     const innerEl_   = stickyEl.value?.querySelector('.sk-inner')
     const innerPadV  = innerEl_ ? parseFloat(getComputedStyle(innerEl_).paddingTop) + parseFloat(getComputedStyle(innerEl_).paddingBottom) : 48
-    const bodyMargin = 32 // sk-body margin-top (2rem)
+    const bodyMargin = 32
     const chrome     = cardPadV + innerPadV + headerH + bodyMargin
 
     const maxWindowH  = Math.max(window.innerHeight - NAV_H - chrome, 180)
@@ -169,10 +123,9 @@ onMounted(() => {
     const leftNavH    = navEl.value ? navEl.value.offsetHeight : 0
     const panelH      = Math.min(Math.max(rightPanelH, leftNavH), maxWindowH)
 
-    // Force every belt panel to that height so the belt step is uniform
     panels.forEach(p => { p.style.minHeight = panelH + 'px' })
 
-    const totalTravel = panelH * (skillCats.length - 1)
+    const totalTravel = panelH * (skillCats.value.length - 1)
 
     window_.style.height    = panelH + 'px'
     window_.style.maxHeight = panelH + 'px'
@@ -186,7 +139,7 @@ onMounted(() => {
 
       beltOffset.value = clamped
 
-      const idx = Math.min(skillCats.length - 1, Math.floor(clamped / panelH + 0.35))
+      const idx = Math.min(skillCats.value.length - 1, Math.floor(clamped / panelH + 0.35))
       if (idx !== lastIdx) {
         lastIdx = idx
         activeIdx.value = idx
@@ -214,7 +167,6 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-/* Scoped replacements for section-inner / section-card with compact padding */
 .sk-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -252,7 +204,6 @@ onUnmounted(() => {
 
 .sk-window {
   overflow: hidden;
-  /* height set by JS to fit within viewport */
 }
 
 .sk-belt {
@@ -260,7 +211,6 @@ onUnmounted(() => {
   transition: transform 0.08s linear;
 }
 
-/* Remove interactive appearance — nav items are display-only */
 .skill-nav-item {
   cursor: default;
 }
@@ -274,27 +224,22 @@ onUnmounted(() => {
   color: var(--muted) !important;
 }
 
-/* ── Spacing fixes ── */
-
 .sk-panel {
   width: 100%;
-  /* generous top/bottom padding so each panel has visual breathing room */
   padding: 2rem 0 3rem;
 }
 
-/* Override the global .skill-row gap — more space between each bar */
 .skill-row {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;      /* was 0.35rem */
-  margin-bottom: 1.6rem;  /* space between rows */
+  gap: 0.75rem;
+  margin-bottom: 1.6rem;
 }
 
 .skill-row:last-child {
   margin-bottom: 0;
 }
 
-/* Panel title gets a bit more breathing room too */
 .skill-panel-title {
   margin-bottom: 1.8rem;
 }

@@ -2,7 +2,7 @@
   <section id="hero" class="section-z" style="position:relative; min-height:100vh;">
     <div style="max-width:1100px; margin:0 auto; padding:0 3rem; padding-top:80px; min-height:100vh; display:flex; flex-direction:column; justify-content:center;">
 
-      <p class="hero-tag">// web developer &amp; programmer</p>
+      <p class="hero-tag">{{ t.hero.tag }}</p>
 
       <h1 class="hero-name">
         Kristof<br>
@@ -26,10 +26,9 @@
 
     </div>
 
-    <!-- Positioned against the section (min-height:100vh) so bottom values are always visible -->
     <div class="hero-scroll-hint">
       <div class="scroll-line" />
-      scroll to explore
+      {{ t.hero.scrollHint }}
     </div>
 
     <div class="hero-deco" aria-hidden="true">
@@ -42,13 +41,14 @@
 </template>
 
 <script setup>
+import { computed }          from 'vue'
 import { socials, IconMail } from '@/icons/index.js'
 import { useTypewriter }     from '@/composables/useTypewriter.js'
+import { useI18n }           from '@/composables/useI18n.js'
 
-const { text: typewriterText } = useTypewriter([
-  'Building the web since 2010.',
-  'Frontend engineering, done right.',
-  'JavaScript is home.',
-  "Vue, SASS, Linux — all in a day's work.",
-])
+const { t } = useI18n()
+
+// Pass a computed ref so useTypewriter reacts to language changes and restarts
+const phrases = computed(() => t.value.hero.typewriter)
+const { text: typewriterText } = useTypewriter(phrases)
 </script>
