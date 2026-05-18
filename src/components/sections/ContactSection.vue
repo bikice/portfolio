@@ -37,8 +37,8 @@
           {{ formStatus.text }}
         </p>
 
-        <button class="btn-send" type="submit">
-          <span class="btn-send-text">Send Message →</span>
+        <button class="btn-send" type="submit" :disabled="sending">
+          <span class="btn-send-text">{{ sending ? 'Sending…' : 'Send Message →' }}</span>
         </button>
       </form>
     </div>
@@ -52,13 +52,38 @@ import SectionCard       from '@/components/layout/SectionCard.vue'
 
 const form       = reactive({ name: '', email: '', message: '' })
 const formStatus = ref(null)
+const sending    = ref(false)
 
-function sendMessage() {
-  formStatus.value = {
-    type: 'success',
-    text: `Thanks ${form.name}! Your message was sent. I'll get back to you soon.`,
+async function sendMessage() {
+  sending.value    = true
+  formStatus.value = null
+
+  try {
+    const res = await fetch('/mail.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ name: form.name, email: form.email, message: form.message }),
+    })
+
+    const data = await res.json()
+
+    if (data.ok) {
+      formStatus.value = {
+        type: 'success',
+        text: `Thanks ${form.name}! Your message was sent. I'll get back to you soon.`,
+      }
+      form.name = form.email = form.message = ''
+      setTimeout(() => { formStatus.value = null }, 6000)
+    } else {
+      throw new Error(data.error ?? 'unknown')
+    }
+  } catch {
+    formStatus.value = {
+      type: 'error',
+      text: 'Something went wrong. Please try again or email me directly.',
+    }
+  } finally {
+    sending.value = false
   }
-  form.name = form.email = form.message = ''
-  setTimeout(() => { formStatus.value = null }, 6000)
 }
 </script>
