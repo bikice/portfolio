@@ -16,6 +16,12 @@
             <span class="val">{{ m.val }}</span>
           </div>
         </div>
+
+        <div class="about-status reveal">
+          <span class="about-status-dot" />
+          Available for projects
+        </div>
+
         <p class="about-bio reveal">
           Since 2010 I've been working in the web development space — building modern
           websites and web applications, including the mobile domain. For many years
@@ -35,6 +41,35 @@ const aboutMeta = [
   { key: 'born',      val: '1st November, 1984'                                  },
   { key: 'based in',  val: 'Germany'                                             },
   { key: 'languages', val: 'German, English'                                     },
-  { key: 'focus',     val: 'Web Development · JavaScript · Frontend Engineering' },
+  { key: 'focus',     val: 'Web Development · JavaScript · Frontend Engineering · SEO' },
 ]
 </script>
+
+<style scoped>
+.about-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  border: 1px solid rgba(0, 229, 192, 0.15);
+  padding: 0.3rem 0.7rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: pulse 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 6px var(--accent); }
+  50%       { opacity: 0.5; box-shadow: 0 0 2px var(--accent); }
+}
+</style>
