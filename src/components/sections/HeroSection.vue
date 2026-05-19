@@ -1,6 +1,6 @@
 <template>
   <section id="hero" class="section-z" style="position:relative; min-height:100vh;">
-    <div style="max-width:1100px; margin:0 auto; padding:0 3rem; padding-top:80px; min-height:100vh; display:flex; flex-direction:column; justify-content:center;">
+    <div class="hero-inner">
 
       <p class="hero-tag">{{ t.hero.tag }}</p>
 

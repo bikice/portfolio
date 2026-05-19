@@ -19,7 +19,7 @@
 
 /* ── Base ───────────────────────────────────── */
 @layer base {
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
 
   body {
     background: var(--bg);
@@ -210,6 +210,21 @@
   }
 
   @media (max-width: 768px) { #hero { padding: 100px 1.5rem 2rem; } }
+
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 3rem;
+    padding-top: 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media (max-width: 768px) {
+    .hero-inner { padding: 100px 1.5rem 2rem; }
+  }
 
   .hero-tag {
     font-size: 0.72rem;
