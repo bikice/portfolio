@@ -129,7 +129,10 @@ onMounted(() => {
 
     window_.style.height    = panelH + 'px'
     window_.style.maxHeight = panelH + 'px'
-    track.style.height   = (card.offsetHeight + totalTravel) + 'px'
+
+    // Extra space so the sticky card fully scrolls off before the next section
+    const cardH = card.offsetHeight
+    track.style.height = (cardH + totalTravel + cardH + NAV_H) + 'px'
 
     scrollHandler = () => {
       if (!trackEl.value) return

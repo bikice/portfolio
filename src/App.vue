@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow-x: hidden;">
+  <div>
     <ParticleBackground />
 
     <!-- Sticky Nav -->

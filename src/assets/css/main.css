@@ -19,7 +19,7 @@
 
 /* ── Base ───────────────────────────────────── */
 @layer base {
-  html { scroll-behavior: smooth; overflow-x: hidden; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
 
   body {
     background: var(--bg);
@@ -27,7 +27,7 @@
     font-family: var(--font);
     font-weight: 400;
     line-height: 1.7;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   a {
