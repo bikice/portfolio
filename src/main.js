@@ -28,4 +28,19 @@ const router = createRouter({
   ],
 })
 
+// Keep rel=canonical and og:url in sync with the current route so that every
+// page (home, imprint, data-protection) points to its own URL instead of
+// always pointing to the domain's root.
+const SITE_ORIGIN = 'https://kristof-kamin.de'
+router.afterEach((to) => {
+  const canonicalPath = to.name === 'home' ? '/' : to.path
+  const canonicalUrl  = `${SITE_ORIGIN}${canonicalPath}`
+
+  const canonicalLink = document.querySelector('link[rel="canonical"]')
+  if (canonicalLink) canonicalLink.setAttribute('href', canonicalUrl)
+
+  const ogUrlMeta = document.querySelector('meta[property="og:url"]')
+  if (ogUrlMeta) ogUrlMeta.setAttribute('content', canonicalUrl)
+})
+
 createApp(App).use(router).mount('#app')
