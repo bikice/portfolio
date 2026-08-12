@@ -33,8 +33,7 @@ const router = createRouter({
 // always pointing to the domain's root.
 const SITE_ORIGIN = 'https://kristof-kamin.de'
 router.afterEach((to) => {
-  const canonicalPath = to.name === 'home' ? '/' : to.path
-  const canonicalUrl  = `${SITE_ORIGIN}${canonicalPath}`
+  const canonicalUrl = `${SITE_ORIGIN}${to.path}`
 
   const canonicalLink = document.querySelector('link[rel="canonical"]')
   if (canonicalLink) canonicalLink.setAttribute('href', canonicalUrl)
