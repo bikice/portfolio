@@ -4,15 +4,26 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import * as THREE from 'three'
+import {
+  Color,
+  WebGLRenderer,
+  Scene,
+  PerspectiveCamera,
+  BufferGeometry,
+  BufferAttribute,
+  ShaderMaterial,
+  AdditiveBlending,
+  Points,
+  Vector3,
+} from 'three'
 
 const canvas = ref(null)
 
 // Colour palette
-const C1 = new THREE.Color(0x001a0f)
-const C2 = new THREE.Color(0x006644)
-const C3 = new THREE.Color(0x00c87a)
-const C4 = new THREE.Color(0x00e5c0)
+const C1 = new Color(0x001a0f)
+const C2 = new Color(0x006644)
+const C3 = new Color(0x00c87a)
+const C4 = new Color(0x00e5c0)
 
 const COLS   = 320
 const ROWS   = 160
@@ -32,13 +43,13 @@ function init() {
   const W  = window.innerWidth
   const H  = window.innerHeight
 
-  renderer = new THREE.WebGLRenderer({ canvas: el, antialias: true, alpha: false })
+  renderer = new WebGLRenderer({ canvas: el, antialias: true, alpha: false })
   renderer.setSize(W, H)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setClearColor(0x07090d, 1)
 
-  scene  = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 1000)
+  scene  = new Scene()
+  camera = new PerspectiveCamera(55, W / H, 0.1, 1000)
   camera.position.set(8, 6, 28)
   camera.lookAt(-4, 0, -10)
 
@@ -60,16 +71,16 @@ function init() {
     }
   }
 
-  geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  geo.setAttribute('color',    new THREE.BufferAttribute(colors,    3))
-  geo.setAttribute('size',     new THREE.BufferAttribute(sizes,     1))
+  geo = new BufferGeometry()
+  geo.setAttribute('position', new BufferAttribute(positions, 3))
+  geo.setAttribute('color',    new BufferAttribute(colors,    3))
+  geo.setAttribute('size',     new BufferAttribute(sizes,     1))
 
-  const mat = new THREE.ShaderMaterial({
+  const mat = new ShaderMaterial({
     vertexColors: true,
     transparent:  true,
     depthWrite:   false,
-    blending:     THREE.AdditiveBlending,
+    blending:     AdditiveBlending,
     vertexShader: `
       attribute float size;
       varying vec3  vColor;
@@ -95,7 +106,7 @@ function init() {
     `,
   })
 
-  scene.add(new THREE.Points(geo, mat))
+  scene.add(new Points(geo, mat))
   posArr  = geo.attributes.position.array
   colArr  = geo.attributes.color.array
   sizeArr = geo.attributes.size.array
@@ -155,7 +166,7 @@ function animate() {
 }
 
 function screenToWorld(ex, ey) {
-  const ndc = new THREE.Vector3(
+  const ndc = new Vector3(
       (ex / window.innerWidth)  *  2 - 1,
       (ey / window.innerHeight) * -2 + 1,
       0.5,
