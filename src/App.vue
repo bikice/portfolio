@@ -63,11 +63,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
-import ParticleBackground from '@/components/layout/ParticleBackground.vue'
 import { useScrollSpy }   from '@/composables/useScrollSpy.js'
 import { useI18n }        from '@/composables/useI18n.js'
+
+// Heavy (three.js-based) decorative background — loaded asynchronously so it
+// never blocks the initial render / first contentful paint.
+const ParticleBackground = defineAsyncComponent(() =>
+    import('@/components/layout/ParticleBackground.vue'),
+)
 
 const route      = useRoute()
 const isHome     = computed(() => route.name === 'home')
