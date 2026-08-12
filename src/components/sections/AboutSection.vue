@@ -5,7 +5,10 @@
 
     <div class="about-grid">
       <div class="about-img-wrap reveal">
-        <img src="/images/portrait.jpg" alt="Kristof Kamin" />
+        <picture>
+          <source srcset="/images/portrait.webp" type="image/webp" />
+          <img src="/images/portrait.jpg" alt="Kristof Kamin" width="250" height="250" decoding="async" />
+        </picture>
         <div class="about-img-badge">{{ t.about.badge }}</div>
       </div>
 
